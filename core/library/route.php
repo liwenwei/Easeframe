@@ -47,10 +47,9 @@ final class Route{
 	 *     'app'       =>'admin',
 	 *     'controller'=>'index',
 	 *     'action'    =>'edit',
-	 *     'id'        =>array(
+	 *     'params'    =>array(
 	 *                 'id'  =>9,
-	 *                 'fid' =>10
-	 *               )
+	 *                 'fid' =>10)
 	 * )
 	 */
 	public function getUrlArray(){
@@ -78,30 +77,32 @@ final class Route{
 	 * 将query形式的URL转化为数组
 	 */
 	private function queryToArray() {
-		// 以&分割查询字符串
-		$query_orignal_arr = ! empty ( $this->url_query ['query'] ) ? explode ( '&', $this->url_query ['query'] ) : array ();
-		$query_final_arr = $tmp = array ();
-		if (count ( $query_orignal_arr ) > 0) {
-			foreach ( $query_orignal_arr as $item ) {
-				// 以=分割每个查询字符串
-				$tmp = explode ( '=', $item );
-				// TODO Fix the bug if the length of the array less than 2
-				$query_final_arr [$tmp [0]] = $tmp [1];
+		
+		if (!array_key_exists('query', $this->url_query)){
+			return;
+		}
+		
+		$query_parameters = $this->parseUrlQueryString($this->url_query ['query']);
+		
+		if (count ( $query_parameters ) > 0) {
+
+			if (isset ( $query_parameters ['app'] )) {
+				$this->route_url ['app'] = $query_parameters ['app'];
+				unset ( $query_parameters ['app'] );
 			}
-			if (isset ( $query_final_arr ['app'] )) {
-				$this->route_url ['app'] = $query_final_arr ['app'];
-				unset ( $query_final_arr ['app'] );
+			if (isset ( $query_parameters ['controller'] )) {
+				$this->route_url ['controller'] = $query_parameters ['controller'];
+				unset ( $query_parameters ['controller'] );
 			}
-			if (isset ( $query_final_arr ['controller'] )) {
-				$this->route_url ['controller'] = $query_final_arr ['controller'];
-				unset ( $query_final_arr ['controller'] );
+			if (isset ( $query_parameters ['action'] )) {
+				$this->route_url ['action'] = $query_parameters ['action'];
+				unset ( $query_parameters ['action'] );
 			}
-			if (isset ( $query_final_arr ['action'] )) {
-				$this->route_url ['action'] = $query_final_arr ['action'];
-				unset ( $query_final_arr ['action'] );
-			}
-			if (count ( $query_final_arr ) > 0) {
-				$this->route_url ['params'] = $query_final_arr;
+			
+			foreach ($query_parameters as $key => $value){
+				if ($key != 'controller' || $key != 'controller' || $key != 'app'){
+					$this->route_url ['params'][$key] = $value;
+				}
 			}
 		} else {
 			$this->route_url = array ();
@@ -112,7 +113,70 @@ final class Route{
 	 * 将path info的URL转换为数组
 	 */
 	private function pathInfoToArray(){
-		// TODO 实现该方法
+		
+		if (!array_key_exists('path', $this->url_query)){
+			return;
+		}
+		
+		if (!array_key_exists('query', $this->url_query)){
+			return;
+		}
+		
+		$query_parameters = $this->parseUrlQueryString($this->url_query ['query']);
+		$path_parameters = $this->parseUrlPath($this->url_query ['path']);
+		
+		// 获取$path_parameters最后两个参数，最后一个是action，倒数第二个是controller
+		
+		$path_parameters_count = count($path_parameters);
+		if ($path_parameters_count == 0){
+			$this->route_url = array ();
+		} else if ($path_parameters_count == 1){
+			$this->route_url ['controller'] = $path_parameters[0];
+		} else if ($path_parameters_count >=2){
+			$this->route_url ['controller'] = $path_parameters[$path_parameters_count-2];
+			$this->route_url ['action'] = $path_parameters[$path_parameters_count-1];
+		}
+		
+		foreach ($query_parameters as $key => $value){
+			if ($key != 'controller' || $key != 'controller' || $key != 'app'){
+				$this->route_url ['params'][$key] = $value;
+			}
+		}
+	}
+	
+	/**
+	 * 解析查询字符串，
+	 * 比如：
+	 * id=0&name=alen
+	 * ->
+	 * array('id' = 0, 'name' = 'alen')
+	 * 
+	 * @param string $query
+	 * @return array parameters array
+	 */
+	private function parseUrlQueryString($query){
+		// TODO: 支持HTTP Get数组，例如?a[]=1&a[]=2&a[]=3（重要）
+		// http://stackoverflow.com/questions/7206978/how-to-pass-an-array-via-get-in-php
+		$parameter_pairs = ! empty ( $query ) ? explode ( '&', $query ) : array ();
+		$parameters = array();
+		
+		foreach ( $parameter_pairs as $item ) {
+			// 以=分割每个查询字符串
+			$tmp = explode ( '=', $item );
+			// TODO Fix the bug if the length of the array less than 2
+			$parameters [$tmp [0]] = $tmp [1];
+		}
+		
+		return $parameters;
+	}
+	
+	/**
+	 * 解析URL中的Path
+	 * @param unknown $path
+	 * @return array
+	 */
+	private function parseUrlPath($path){
+		return preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
 	}
 	
 	
