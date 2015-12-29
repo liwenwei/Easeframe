@@ -5,13 +5,13 @@
 
 define('SYSTEM_PATH', dirname(__FILE__));
 define('ROOT_PATH',  substr(SYSTEM_PATH, 0,-7));
-define('SYS_LIB_PATH', SYSTEM_PATH.'/lib');
+define('SYS_LIB_PATH', SYSTEM_PATH.'/library');
 define('APP_LIB_PATH', ROOT_PATH.'/lib');
 define('SYS_CORE_PATH', SYSTEM_PATH.'/core');
-define('CONTROLLER_PATH', ROOT_PATH.'/controller');
-define('MODEL_PATH', ROOT_PATH.'/model');
-define('VIEW_PATH', ROOT_PATH.'/view');
-define('LOG_PATH', ROOT_PATH.'/error/');
+define('CONTROLLER_PATH', ROOT_PATH.'/Application/Controller');
+define('MODEL_PATH', ROOT_PATH.'/Application/Model');
+define('VIEW_PATH', ROOT_PATH.'/Application/View');
+//define('LOG_PATH', ROOT_PATH.'/error/');
 
 
 final class Application{
@@ -43,7 +43,7 @@ final class Application{
 		self::$_lib['route']->setUrlType(self::$_config['route']['url_type']);
 		$url_array = self::$_lib['route']->getUrlArray();
 
-		self::routeToCm($url_array);
+		self::routeParse($url_array);
 	}
 	
 	/**
@@ -98,11 +98,11 @@ final class Application{
 	 */
 	public static function setAutoLibs(){
 		self::$_lib = array(
-			'route'           =>    SYS_LIB_PATH.'/lib_route.php',
-			'mysql'           =>    SYS_LIB_PATH.'/lib_mysql.php',
-			'template'        =>    SYS_LIB_PATH.'/lib_template.php',
-			'cache'           =>    SYS_LIB_PATH.'/lib_cache.php',
-			'thumbnail'       =>    SYS_LIB_PATH.'/lib_thumbnail.php'
+			'route'           =>    SYS_LIB_PATH.'/route.php',
+			'mysql'           =>    SYS_LIB_PATH.'/mysql.php',
+			'template'        =>    SYS_LIB_PATH.'/template.php',
+			'cache'           =>    SYS_LIB_PATH.'/cache.php',
+			'thumbnail'       =>    SYS_LIB_PATH.'/thumbnail.php'
 		);
 	}
 	
@@ -110,7 +110,7 @@ final class Application{
 	 * 根据URL分发到Controller和Model
 	 * @param array $url_array
 	 */
-	public static function routeToCm($url_array = array()){
+	public static function routeParse($url_array = array()){
 		$app        = '';
 		$controller = '';
 		$action     = '';
