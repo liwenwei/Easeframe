@@ -3,8 +3,13 @@
 class Controller
 {
 	
+	protected $view = null;
+	
 	public function __construct(){
 		
+		// 实例化视图类
+		require 'View.php';
+		$this->view = new View();
 	}
 	
 	/**
