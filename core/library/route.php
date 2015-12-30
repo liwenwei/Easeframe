@@ -78,11 +78,11 @@ final class Route{
 	 */
 	private function queryToArray() {
 		
-		if (!array_key_exists('query', $this->url_query)){
-			return;
-		}
+		$query_parameters = array();
 		
-		$query_parameters = $this->parseUrlQueryString($this->url_query ['query']);
+		if (!array_key_exists('query', $this->url_query)){
+			$query_parameters = $this->parseUrlQueryString($this->url_query ['query']);
+		}
 		
 		if (count ( $query_parameters ) > 0) {
 
@@ -114,16 +114,16 @@ final class Route{
 	 */
 	private function pathInfoToArray(){
 		
-		if (!array_key_exists('path', $this->url_query)){
-			return;
+		$path_parameters = array();
+		$query_parameters = array();
+		
+		if (array_key_exists('path', $this->url_query)){
+			$path_parameters = $this->parseUrlPath($this->url_query ['path']);
 		}
 		
-		if (!array_key_exists('query', $this->url_query)){
-			return;
+		if (array_key_exists('query', $this->url_query)){
+			$query_parameters = $this->parseUrlQueryString($this->url_query ['query']);
 		}
-		
-		$query_parameters = $this->parseUrlQueryString($this->url_query ['query']);
-		$path_parameters = $this->parseUrlPath($this->url_query ['path']);
 		
 		// 获取$path_parameters最后两个参数，最后一个是action，倒数第二个是controller
 		
