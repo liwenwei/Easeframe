@@ -22,8 +22,8 @@ final class Application {
 	public static function init() {
 		self::setAutoLibs ();
 		
-		require SYSTEM_PATH . '/basemodel.php';
-		require SYSTEM_PATH . '/basecontroller.php';
+		require SYSTEM_PATH . '/Model.php';
+		require SYSTEM_PATH . '/Controller.php';
 	}
 	
 	/**

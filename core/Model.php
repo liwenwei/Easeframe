@@ -4,7 +4,7 @@
  * @author 李文伟
  *
  */
-class BaseModel{
+class Model{
 	
 	protected $db = null;
 	
