@@ -1,4 +1,4 @@
 # Easeframe
-Easy &amp; Simple PHP MVC Framework
+Easy PHP MVC Framework
 
 Welcome your contributions!!!
