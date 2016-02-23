@@ -10,7 +10,7 @@ $CONFIG['system']['lib'] = array(
 
 $CONFIG['system']['route'] = array(
 	'default_controller'   =>    'Index',    // 系统默认控制器
-	'default_action'       =>    'Index',   // 系统默认控制器
+	'default_action'       =>    'Index',   // 系统默认Action
 	'url_type'             =>    2          // 定义URL的形式，1 为普通模式， 2 为PATHINFO。普通模式，index.php?c=controller&a=action&id=2；PATHINFO，index.php/controller/action/id/2
 );
 
